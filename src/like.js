@@ -1,6 +1,5 @@
  import React, { Component } from 'react';
- import AsyncStorage from '@react-native-community/async-storage';
- import { Linking, Image } from 'react-native';
+ import { Linking, Image, AsyncStorage } from 'react-native';
  import { Container, Content, Button, Spinner, Header, View, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Icon } from 'native-base';
  import GetApiData from './get_api_data.js'
 
@@ -12,38 +11,26 @@ export default class Like extends Component {
     this.apiDataManager = new GetApiData();
   }
 
-  async checkData(){
-    try {
-      const data = await AsyncStorage.multiGet(['@42apidata', '@refreshTiming'])
-      const startTime = data[1][1]
-      const value = data[0][1]
-      const endTime = new Date();
-      const elapsedTime = (endTime - startTime) / 1000
-      if (value === null || (value !== null && elapsedTime > 300)) {
-        const data = await this.apiDataManager.getAuthToken('__ID__',
-        '__PASS__')
-        try{
-          //await AsyncStorage.multiSet([['@42apidata', JSON.stringify(data)], ['@refreshTiming', new Date()]])
-          this.setState({cards:data, isLoading:true})
-        }catch (e){
-          console.log(e)
-        }
-      }else {
-        const value = await AsyncStorage.getItem('@42apidata')
-        this.setState({cards:value, isLoading:true})
-      }
-    } catch (e) {
-      console.log(e)
+  async updateCards(cache){
+    let data = null
+    if (cache.needUpdate)
+      data = await cache.updatedData()
+    if (data === null && !this.state.cards){
+      data = await cache.getData()
+      if (data === null)
+        data = await cache.updatedData()
     }
-  }
-
-  componentDidMount() {
-    this.checkData()
+    if (data !== null)
+      this.setState({cards:data, isLoading:true})
   }
 
   render() {
     const {cards, isLoading} = this.state
-    if (!isLoading)
+    const cache = this.props.navigation.getParam('cache', 'NO-CACHE')
+    if (cache !== 'NO-CACHE'){
+      this.updateCards(cache)
+    }
+    if (!isLoading){
     return (
     <Container>
       <Header />
@@ -52,7 +39,8 @@ export default class Like extends Component {
       </Content>
     </Container>
   );
-    else
+}
+    else{
     return (
       <Container>
         <Header />
@@ -73,7 +61,7 @@ export default class Like extends Component {
                     <Body>
                       <Text>{item.host ? item.host : 'no host'}</Text>
                       <Text style={{color: 'blue'}}
-                      onPress={() => this.openUrl(item.profil)}>
+                      onPress={() => Linking.openURL(item.profil)}>
                       Profil
                       </Text>
                     </Body>
@@ -90,17 +78,18 @@ export default class Like extends Component {
             }
           />
         </View>
-        <View style={{ flexDirection: "row", flex: 1, position: "absolute", bottom: 50, left: 0, right: 0, justifyContent: 'space-between', padding: 15 }}>
+        <View style={{ flexDirection: "row", flex: 1, position: "absolute", bottom: 50, left: 0, right: 0, justifyContent: 'space-evenly', alignItems: 'center', padding: 12 }}>
           <Button iconLeft onPress={() => this._deckSwiper._root.swipeLeft()}>
-            <Icon name="arrow-back" />
-            <Text>Swipe Left</Text>
+            <Icon name="trash" />
+            <Text>UGLY</Text>
           </Button>
           <Button iconRight onPress={() => this._deckSwiper._root.swipeRight()}>
-            <Icon name="arrow-forward" />
-            <Text>Swipe Right</Text>
+            <Icon name="heart" />
+            <Text>BG</Text>
           </Button>
         </View>
       </Container>
     );
+   }
   }
 }

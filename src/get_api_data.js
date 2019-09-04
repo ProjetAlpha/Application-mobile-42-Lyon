@@ -33,6 +33,11 @@ export default class GetApiData{
         userData = [...userData, {name:imgName,
           path:imgPath, link:imgUrl, host:data[i].host.split('.')[0], profil:'https://profile.intra.42.fr/users/'+imgName}]
     }
+    userData.sort((a, b) => {
+      const compareName = a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      const compareZone = a.host.substring(0, 2).localeCompare(b.host.substring(0, 2), 'fr', { numeric: true })
+      return compareZone || compareName;
+    });
     return (userData)
   }
 
