@@ -25,7 +25,8 @@ export default class GetApiData{
     for (let i = 0; i < data.length; i++){
       if (data[i].end_at !== null)
         continue;
-      const imgUrl = 'https://cdn.intra.42.fr/users/medium_'+data[i].user.login+'.JPG'
+      //https://cdn.intra.42.fr/users/small_pichanal.jpg == photo de pisicine si pas de photo de studs.
+      const imgUrl = 'https://cdn.intra.42.fr/users/small_'+data[i].user.login+'.JPG'
       const imgName = data[i].user.login
       const imgPath = './api_img/'+imgName+'.jpg'
       const hasDuplicate = userData.some(data => data['name'] === imgName)

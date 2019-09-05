@@ -12,7 +12,6 @@ export default class Cache
 
   async checkUpdate(){
       try {
-        console.log('call needUpdate !')
         const data = await AsyncStorage.multiGet(['api_data', 'refresh_timing'])
         const startTime = data[1][1] ? JSON.parse(data[1][1]).time : 0
         const value = data[0][1]
@@ -31,7 +30,7 @@ export default class Cache
     try {
         this.needUpdate = false
         const items = await this.apiDataManager.getAuthToken('__ID__',
-        '__SECRET__')
+        '__PASS__')
         await AsyncStorage.multiSet([['api_data', JSON.stringify(items)], ['refresh_timing', JSON.stringify({time:Date.now()})]])
         return (items)
     } catch (e) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator, BottomTabBar } from 'react-navigation-tabs';
 import { createAppContainer } from 'react-navigation';
-import { Button, Text, Icon, Footer, FooterTab } from "native-base";
+import { Button, Text, Icon, Footer, FooterTab, Container, Content, StyleProvider } from "native-base";
 import { AppRegistry } from "react-native";
 import UserList from "./src/userList.js";
 import Like from "./src/like.js";
@@ -23,28 +23,31 @@ const MainScreenNavigator = createBottomTabNavigator(
       const listBtnColor = routes[routeIndex].routeName == "UserList" ? props.activeTintColor : props.inactiveTintColor
       return (
         <Footer>
-          <FooterTab>
-            <Button
-              vertical
-              active={routes[routeIndex].routeName == "UserList"}
-              onPress={() => props.navigation.navigate("UserList", {cache:cacheObj})}>
-              <Icon name="list" />
-              <Text>List</Text>
-            </Button>
-            <Button
-              vertical
-              active={routes[routeIndex].routeName == "Like"}
-              onPress={() => props.navigation.navigate("Like", {cache:cacheObj})}>
-              <Icon name="heart" />
-              <Text>Like</Text>
-            </Button>
-          </FooterTab>
+        <FooterTab>
+        <Button
+        vertical
+        active={routes[routeIndex].routeName == "UserList"}
+        onPress={() => props.navigation.navigate("UserList", {cache:cacheObj})}>
+        <Icon name="list"/>
+        <Text>List</Text>
+        </Button>
+        <Button
+        vertical
+        active={routes[routeIndex].routeName == "Like"}
+        onPress={() => props.navigation.navigate("Like", {cache:cacheObj})}>
+        <Icon name="heart"/>
+        <Text>Like</Text>
+        </Button>
+        </FooterTab>
         </Footer>
       );
     },
     tabBarOptions: {
       activeTintColor: 'tomato',
-      inactiveTintColor: 'gray',
+      inactiveTintColor: 'grey',
+      style: {
+        backgroundColor:'#6a51ae'
+      }
     },
     initialRouteName : 'UserList',
     initialRouteParams: {cache:cacheObj}

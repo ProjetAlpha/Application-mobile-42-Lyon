@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Content, Header, Spinner, List, ListItem, Left, Thumbnail, Body, Text, Right, Button} from 'native-base';
-import  { Linking, AsyncStorage, ScrollView } from 'react-native';
+import  { Linking, ScrollView } from 'react-native';
+import { AsyncStorage } from '@react-native-community/async-storage'
 import GetApiData from './get_api_data.js'
 import SearchBar from './search.js'
 
@@ -33,7 +34,7 @@ export default class UserList extends Component {
   constructor(props){
     super(props)
     this.apiDataManager = new GetApiData();
-    this.state = {items:'', isLoading:false}
+    this.state = {items:'', filerData:'', isLoading:false}
   }
 
   async updateItems(cache){
@@ -51,24 +52,31 @@ export default class UserList extends Component {
 
   searchListUpdate(needle){
     const query = needle.toLowerCase()
-    const heystack = this.state.items
-    this.setState({items: heystack.filter(item => item.name.toLowerCase().indexOf(query) >= 0), isLoading:true})
+    this.setState(prevState => (
+      {
+        items:prevState.items,
+        filterData: prevState.items.filter(item => item.name.toLowerCase().indexOf(query) >= 0),
+        isLoading:true
+      })
+    )
   }
 
   cancelSearchUpdate(){
-    this.setState({items:'', isLoading:false})
+    this.setState(prevState => ({items:prevState.items, filterData:'', isLoading:true}))
   }
 
   render() {
-    const {items, isLoading} = this.state
+    // OPTIMIZED: charger 10 profils max pour le filtre et les items.
+    const {items, filterData, isLoading} = this.state
+    const listData = filterData ? filterData : items
     const cache = this.props.navigation.getParam('cache', 'NO-CACHE')
     if (cache !== 'NO-CACHE'){
       this.updateItems(cache)
     }
-    if (!isLoading || !Array.isArray(items)){
+    if (!isLoading){
         return (
           <Container>
-            <Header />
+            <Header style={{backgroundColor:"#6a51ae"}}/>
             <Content>
               <Spinner />
             </Content>
@@ -83,7 +91,7 @@ export default class UserList extends Component {
           <Content>
           <List>
           {
-            items.map(
+            listData.map(
               (item, index) =>
               <Item uri={item.link} name={item.name} profil={item.profil} host={item.host} key={index}/>
             )

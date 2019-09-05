@@ -1,7 +1,8 @@
  import React, { Component } from 'react';
- import { Linking, Image, AsyncStorage } from 'react-native';
+ import { Linking, Image } from 'react-native';
  import { Container, Content, Button, Spinner, Header, View, DeckSwiper, Card, CardItem, Thumbnail, Text, Left, Body, Icon } from 'native-base';
  import GetApiData from './get_api_data.js'
+ import { AsyncStorage } from '@react-native-community/async-storage'
 
 export default class Like extends Component {
 
@@ -33,7 +34,7 @@ export default class Like extends Component {
     if (!isLoading){
     return (
     <Container>
-      <Header />
+      <Header style={{backgroundColor:"#6a51ae"}}/>
       <Content>
         <Spinner />
       </Content>
